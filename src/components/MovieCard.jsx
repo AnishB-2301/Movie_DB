@@ -1,11 +1,19 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import { useHistory } from "react-router-dom";
 
 const MovieCard = ({
-  film: { title, vote_average, poster_path, release_date, original_language },
+  film: { id,title, vote_average, poster_path, release_date, original_language },
 }) => {
+
+  const history = useHistory();
+
+  const handleClick = () => {
+    history.push(`/movies/${id}`);
+  };
+
   return (
-    <div className="movie-card">
+    <div className="movie-card" onClick={handleClick}>
       <img
         src={
           poster_path
