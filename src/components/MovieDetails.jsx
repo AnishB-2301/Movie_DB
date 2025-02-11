@@ -1,12 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const MovieDetails = ({ movies }) => {
+const API_BASE_URL = 'https://api.themoviedb.org/3';
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
+const API_OPTIONS = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${API_KEY}`
+  }
+}
+
+const MovieDetails = () => {
   const { id } = useParams();
-  const movie = movies.find((film) => film.id === parseInt(id));
+  const [movie, setMovie] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/movie/${id}`, API_OPTIONS);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch movie details');
+        }
+
+        const data = await response.json();
+        setMovie(data);
+      } catch (error) {
+        console.error(`Error fetching movie details: ${error}`);
+        setErrorMessage('Error fetching movie details. Please try again later.');
+      }
+    };
+
+    fetchMovieDetails();
+  }, [id]);
+
+  if (errorMessage) {
+    return <div>{errorMessage}</div>;
+  }
 
   if (!movie) {
-    return <div>Movie not found</div>;
+    return <div>Loading...</div>;
   }
 
   return (
