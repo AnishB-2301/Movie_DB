@@ -3,13 +3,13 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 const MovieCard = ({
-  film: { id,title, vote_average, poster_path, release_date, original_language },
+  film: { title, vote_average, poster_path, release_date, original_language },
 }) => {
 
   const history = useHistory();
 
   const handleClick = () => {
-    history.push(`/movies/${id}`);
+    history.push(`/movies/${title}`);
   };
 
   return (

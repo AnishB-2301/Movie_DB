@@ -137,7 +137,7 @@ const App = () => {
             </div>
           </main>
         </Route>
-        <Route path="/movies/:id" componment={MovieDetails} />
+        <Route path="/movies/:title" componment={MovieDetails} />
       </Switch>
     </Router>
   );
