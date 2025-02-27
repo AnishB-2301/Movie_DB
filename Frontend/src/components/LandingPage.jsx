@@ -4,21 +4,9 @@ import Search from "./Search.jsx";
 import Spinner from "./Spinner.jsx";
 import MovieCard from "./MovieCard.jsx";
 import { useDebounce } from "react-use";
-import { getTrendingMovies, updateSearchCount } from "../appwrite.js";
+// import { getTrendingMovies, updateSearchCount } from "../appwrite.js";
 
 const LandingPage = () => {
-  const API_BASE_URL = "https://api.themoviedb.org/3";
-
-  const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-
-  const API_OPTIONS = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${API_KEY}`,
-    },
-  };
-
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -38,11 +26,7 @@ const LandingPage = () => {
     setErrorMessage("");
 
     try {
-      const endpoint = query
-        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
-
-      const response = await fetch(endpoint, API_OPTIONS);
+      const response = await fetch(`/api/movies?query=${encodeURIComponent(query)}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch movies");
@@ -69,11 +53,34 @@ const LandingPage = () => {
     }
   };
 
+  const updateSearchCount = async (searchTerm, film) => {
+    try {
+      const response = await fetch('/api/updateSearchCount', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ searchTerm, film }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update search count");
+      }
+    } catch (error) {
+      console.error(`Error updating search count: ${error}`);
+    }
+  };
+
   const loadTrendingMovies = async () => {
     try {
-      const movies = await getTrendingMovies();
+      const response = await fetch('/api/trendingMovies');
 
-      setTrendingMovies(movies);
+      if (!response.ok) {
+        throw new Error("Failed to fetch trending movies");
+      }
+
+      const data = await response.json();
+      setTrendingMovies(data);
     } catch (error) {
       console.error(`Error fetching trending movies: ${error}`);
     }
