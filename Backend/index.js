@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const API_KEY = process.env.VITE_TMDB_API_KEY;
 
 const DATABASE = process.env.DATABASE;
 
@@ -21,8 +21,8 @@ app.use(express.json());
 const moviesRoutes = require('./routes/moviesRoutes');
 app.use('/api', moviesRoutes);
   
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 module.exports = { mongoose };

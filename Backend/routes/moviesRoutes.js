@@ -29,7 +29,7 @@ router.get('/api/movies', async (req, res) => {
     }
 });
 
-app.get('/api/movies/:id', async (req, res) => {
+router.get('/api/movies/:id', async (req, res) => {
     const { id } = req.params;
   
     try {
