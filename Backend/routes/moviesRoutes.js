@@ -52,8 +52,8 @@ app.post('/updateSearchCount', async (req, res) => {
   const { searchTerm, film } = req.body;
 
   try {
-    const db = client.db(MONGO_DB_NAME);
-    const collection = db.collection(MONGO_COLLECTION_NAME);
+    const db = client.db(Movies);
+    const collection = db.collection(Count_details);
 
     const result = await collection.findOne({ searchTerm });
 
@@ -80,8 +80,8 @@ app.post('/updateSearchCount', async (req, res) => {
 
 app.get('/trendingMovies', async (req, res) => {
   try {
-    const db = client.db(MONGO_DB_NAME);
-    const collection = db.collection(MONGO_COLLECTION_NAME);
+    const db = client.db(Movies);
+    const collection = db.collection(Count_details);
 
     const result = await collection.find().sort({ count: -1 }).limit(5).toArray();
 
