@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Search from "./Search.jsx";
 import Spinner from "./Spinner.jsx";
 import MovieCard from "./MovieCard.jsx";
@@ -20,8 +20,7 @@ const LandingPage = () => {
   // by waiting for the user to stop typing for 500ms
   useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
 
-  const fetchMovies = async (query = "") => {
-    setIsLoading(true);
+  const fetchMovies = useCallback(async (query = "") => {
     setIsLoading(true);
     setErrorMessage("");
 
@@ -51,7 +50,7 @@ const LandingPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const updateSearchCount = async (searchTerm, film) => {
     try {
@@ -88,7 +87,7 @@ const LandingPage = () => {
 
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, fetchMovies]);
 
   useEffect(() => {
     loadTrendingMovies();
