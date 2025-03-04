@@ -54,7 +54,7 @@ const LandingPage = () => {
 
   const updateSearchCount = async (searchTerm, film) => {
     try {
-      const response = await fetch('http://localhost:5000/api/updateSearchCount', {
+      const response = await fetch('/api/updateSearchCount', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const LandingPage = () => {
 
   const loadTrendingMovies = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/trendingMovies');
+      const response = await fetch('/api/trendingMovies');
 
       if (!response.ok) {
         throw new Error("Failed to fetch trending movies");
