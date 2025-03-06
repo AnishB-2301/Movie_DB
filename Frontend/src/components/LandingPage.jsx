@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Search from "./Search.jsx";
 import Spinner from "./Spinner.jsx";
 import MovieCard from "./MovieCard.jsx";
@@ -20,12 +21,12 @@ const LandingPage = () => {
   // by waiting for the user to stop typing for 500ms
   useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm]);
 
-  const fetchMovies = useCallback(async (query = "") => {
+  const fetchMovies = async (query = "") => {
     setIsLoading(true);
     setErrorMessage("");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/movies?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`/api/movies?query=${encodeURIComponent(query)}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch movies");
@@ -50,7 +51,7 @@ const LandingPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   const updateSearchCount = async (searchTerm, film) => {
     try {
@@ -87,7 +88,7 @@ const LandingPage = () => {
 
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
-  }, [debouncedSearchTerm, fetchMovies]);
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     loadTrendingMovies();
