@@ -1,6 +1,7 @@
 import React from 'react'
 import LandingPage from './components/LandingPage.jsx'
 import MovieDetails from './components/MovieDetails.jsx'
+import MovieForm from './components/MovieForm.jsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />          
         <Route path="/movies/:id" element={<MovieDetails />} />
+        <Route path="/add-movie" element={<MovieForm />} />
       </Routes>
     </BrowserRouter>
   );

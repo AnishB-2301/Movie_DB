@@ -104,6 +104,12 @@ const LandingPage = () => {
           <h1>Find Movies You&apos;ll Enjoy Without the Hassle</h1>
 
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <button 
+            onClick={() => window.location.href='/add-movie'} 
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Add New Movie
+          </button>
         </header>
 
         {trendingMovies.length > 0 && (
