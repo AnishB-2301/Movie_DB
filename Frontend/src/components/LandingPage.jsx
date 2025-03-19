@@ -26,7 +26,7 @@ const LandingPage = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch(`/api/movies?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`http://localhost:5000/api/movies?query=${encodeURIComponent(query)}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch movies");
@@ -53,27 +53,9 @@ const LandingPage = () => {
     }
   };
 
-  const updateSearchCount = async (searchTerm, film) => {
-    try {
-      const response = await fetch('/api/updateSearchCount', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ searchTerm, film }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update search count");
-      }
-    } catch (error) {
-      console.error(`Error updating search count: ${error}`);
-    }
-  };
-
   const loadTrendingMovies = async () => {
     try {
-      const response = await fetch('/api/trendingMovies');
+      const response = await fetch('http://localhost:5000/trendingMovies');
 
       if (!response.ok) {
         throw new Error("Failed to fetch trending movies");
@@ -120,7 +102,7 @@ const LandingPage = () => {
               {trendingMovies.map((film, index) => (
                 <li key={film.$id}>
                   <p>{index + 1}</p>
-                  <img src={film.poster_url} alt={film.title} />
+                  <img src={film.posterUrl} alt={film.title} />
                 </li>
               ))}
             </ul>

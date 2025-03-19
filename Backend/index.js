@@ -6,9 +6,6 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-const API_BASE_URL = "https://api.themoviedb.org/3";
-const API_KEY = process.env.VITE_TMDB_API_KEY;
-
 const DATABASE = process.env.DATABASE;
 
 mongoose.connect(DATABASE, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -18,9 +15,10 @@ mongoose.connect(DATABASE, { useNewUrlParser: true, useUnifiedTopology: true })
 app.use(cors());
 app.use(express.json());
 
+// Routes
 const moviesRoutes = require('./routes/moviesRoutes');
-app.use('/api', moviesRoutes);
-  
+app.use('/', moviesRoutes);
+// Start server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

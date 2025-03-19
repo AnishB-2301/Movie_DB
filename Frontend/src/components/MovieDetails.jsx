@@ -1,65 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const API_BASE_URL = 'https://api.themoviedb.org/3';
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-
-const API_OPTIONS = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${API_KEY}`
-  }
-}
+import Spinner from './Spinner';
 
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/movie/${id}`, API_OPTIONS);
-
+        const response = await fetch(`http://localhost:5000/api/movies/${id}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch movie details');
+          throw new Error('Movie not found');
         }
-
         const data = await response.json();
         setMovie(data);
       } catch (error) {
-        console.error(`Error fetching movie details: ${error}`);
-        setErrorMessage('Error fetching movie details. Please try again later.');
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchMovieDetails();
   }, [id]);
 
-  if (errorMessage) {
-    return <div>{errorMessage}</div>;
-  }
-
-  if (!movie) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <Spinner />;
+  if (error) return <div className="error">{error}</div>;
+  if (!movie) return <div>No movie found</div>;
 
   return (
-    <div className="movie-detail">
-      <img
-        src={
-          movie.poster_path
-            ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
-            : "/no-Poster.png"
-        }
-        alt={movie.title}
-      />
-      <h1>{movie.title}</h1>
-      <p>Rating: {movie.vote_average}</p>
-      <p>Language: {movie.original_language}</p>
-      <p>Release Date: {movie.release_date}</p>
-      <p>{movie.overview}</p>
+    <div className="movie-details">
+      <img src={movie.posterUrl} alt={movie.title} />
+      <div className="info">
+        <h1>{movie.title}</h1>
+        <p className="rating">Rating: {movie.rating}</p>
+        <p className="release-date">
+          Release Date: {new Date(movie.releaseDate).toLocaleDateString()}
+        </p>
+        <p className="language">Language: {movie.language}</p>
+        <p className="description">{movie.description}</p>
+      </div>
     </div>
   );
 };
