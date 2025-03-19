@@ -13,15 +13,26 @@ router.get('/api/movies', async (req, res) => {
             movies = await Movies.find({
                 title: { $regex: query, $options: 'i' }
             });
+
+            res.json({
+                results: movies,
+                Response: movies.length > 0 ? "True" : "False",
+                Error: movies.length === 0 ? "Movie not found!" : null
+            });
         } else {
             // Get all movies sorted by creation date
             movies = await Movies.find().sort({ createdAt: -1 });
+            res.json({
+                results: movies,
+                Response: "True"
+            });
         }
-        
-        res.json({ results: movies });
     } catch (error) {
         console.error(`Error fetching movies: ${error}`);
-        res.status(500).json({ error: 'Failed to fetch movies' });
+        res.status(500).json({ 
+            Response: "False",
+            Error: 'Failed to fetch movies' 
+        });
     }
 });
 
@@ -61,6 +72,44 @@ router.get('/trendingMovies', async (req, res) => {
     } catch (error) {
         console.error(`Error fetching trending movies: ${error}`);
         res.status(500).json({ error: 'Failed to fetch trending movies' });
+    }
+});
+
+// Delete movie
+router.delete('/api/movies/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedMovie = await Movies.findByIdAndDelete(id);
+        
+        if (!deletedMovie) {
+            return res.status(404).json({ error: 'Movie not found' });
+        }
+        
+        res.json({ message: 'Movie deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting movie:', error);
+        res.status(500).json({ error: 'Failed to delete movie' });
+    }
+});
+
+// Update movie
+router.put('/api/movies/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedMovie = await Movies.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true }
+        );
+        
+        if (!updatedMovie) {
+            return res.status(404).json({ error: 'Movie not found' });
+        }
+        
+        res.json(updatedMovie);
+    } catch (error) {
+        console.error('Error updating movie:', error);
+        res.status(500).json({ error: 'Failed to update movie' });
     }
 });
 

@@ -35,16 +35,13 @@ const LandingPage = () => {
       const data = await response.json();
 
       if (data.Response === "False") {
-        setErrorMessage(data.Error || "Failed to fetch movies");
+        setErrorMessage(data.Error || "No movies found");
         setMovieList([]);
         return;
       }
 
       setMovieList(data.results || []);
 
-      if (query && data.results.length > 0) {
-        await updateSearchCount(query, data.results[0]);
-      }
     } catch (error) {
       console.error(`Error fetching movies: ${error}`);
       setErrorMessage("Error fetching movies. Please try again later.");

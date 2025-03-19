@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const MovieForm = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Get movie ID if editing
+  const isEditing = Boolean(id); // Check if we're in edit mode
 
   const [movieData, setMovieData] = useState({
     title: '',
@@ -12,6 +14,30 @@ const MovieForm = () => {
     description: '',
     posterUrl: ''
   });
+
+  // Fetch movie data if editing
+  useEffect(() => {
+    if (isEditing) {
+      const fetchMovie = async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/api/movies/${id}`);
+          if (!response.ok) {
+            throw new Error('Movie not found');
+          }
+          const data = await response.json();
+          // Format the date to YYYY-MM-DD for the input
+          const formattedDate = new Date(data.releaseDate).toISOString().split('T')[0];
+          setMovieData({ ...data, releaseDate: formattedDate });
+        } catch (error) {
+          console.error('Error fetching movie:', error);
+          alert('Failed to fetch movie details');
+          navigate('/');
+        }
+      };
+
+      fetchMovie();
+    }
+  }, [id, isEditing, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,8 +50,11 @@ const MovieForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/movies', {
-        method: 'POST',
+      const url = isEditing ? `http://localhost:5000/api/movies/${id}` : 'http://localhost:5000/api/movies';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -36,22 +65,23 @@ const MovieForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add movie');
+        throw new Error(isEditing ? 'Failed to update movie' : 'Failed to add movie');
       }
 
-      const data = await response.json();
-      alert('Movie added successfully!');
+      alert(isEditing ? 'Movie updated successfully!' : 'Movie added successfully!');
       navigate('/');
     } catch (error) {
-      console.error('Error adding movie:', error);
-      alert('Failed to add movie. Please try again.');
+      console.error('Error:', error);
+      alert(error.message);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">Add New Movie</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          {isEditing ? 'Edit Movie' : 'Add New Movie'}
+        </h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -76,11 +106,11 @@ const MovieForm = () => {
               required
             >
               <option value="">Select Rating</option>
-              <option value="G">G</option>
+              <option value="U">U</option>
               <option value="PG">PG</option>
               <option value="PG-13">PG-13</option>
               <option value="R">R</option>
-              <option value="NC-17">NC-17</option>
+              <option value="A">A</option>
             </select>
           </div>
 
@@ -151,7 +181,7 @@ const MovieForm = () => {
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
-              Add Movie
+              {isEditing ? 'Update Movie' : 'Add Movie'}
             </button>
           </div>
         </form>
