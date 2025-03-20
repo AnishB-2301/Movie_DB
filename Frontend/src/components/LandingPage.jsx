@@ -97,7 +97,7 @@ const LandingPage = () => {
 
             <ul>
               {trendingMovies.map((film, index) => (
-                <li key={film.$id}>
+                <li key={film._id}>
                   <p>{index + 1}</p>
                   <img src={film.posterUrl} alt={film.title} />
                 </li>
@@ -116,7 +116,7 @@ const LandingPage = () => {
           ) : (
             <ul>
               {movieList.map((film) => (
-                <MovieCard key={film.id} film={film} />
+                <MovieCard key={film._id} film={film} />
               ))}
             </ul>
           )}
